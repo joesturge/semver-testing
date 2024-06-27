@@ -19,3 +19,11 @@ jobs:
         uses: huggingface/semver-release-action@latest
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          dryRun: true
+
+      - name: print outputs
+        run: |
+          echo "The new version is ${{ steps.release.outputs.version }}"
+          echo "The release tag is ${{ steps.release.outputs.tag }}"
+          echo "The release changelog is ${{ steps.release.outputs.changelog }}"
