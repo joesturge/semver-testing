@@ -18,6 +18,8 @@ jobs:
       - name: Release
         id: release
         uses: huggingface/semver-release-action@latest
+        with:
+          branches: '["main", "beta", "alpha"]'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
