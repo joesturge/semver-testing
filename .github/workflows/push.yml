@@ -17,3 +17,5 @@ jobs:
 
       - name: Release
         uses: huggingface/semver-release-action@latest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
