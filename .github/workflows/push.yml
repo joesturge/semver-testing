@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Release
         id: release
@@ -23,12 +23,11 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update CHANGELOG.md
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && steps.release.outputs.version
         run: |
           echo "${{ steps.release.outputs.changelog }}" | cat - CHANGELOG.md > temp && mv temp CHANGELOG.md
 
-      - name: Commit and push changes
-        if: github.ref == 'refs/heads/main'
-        run: |
-          git commit -am "chore(release-${{ steps.release.outputs.version }}): Update CHANGELOG.md"
-          git push
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        if: github.ref == 'refs/heads/main' && steps.release.outputs.version
+        with:
+          commit_message: "chore(${{ steps.release.outputs.version }}): Update CHANGELOG.md"
