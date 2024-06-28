@@ -14,11 +14,8 @@ jobs:
         contents: write
 
     steps:
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
+      - uses: actions/checkout@v4
+      - uses: qoomon/setup-git@v1
 
       - name: Release
         id: release
@@ -32,9 +29,6 @@ jobs:
         if: github.ref == 'refs/heads/main' && steps.release.outputs.version
         run: |
           echo "${{ steps.release.outputs.changelog }}" | cat - CHANGELOG.md > temp && mv temp CHANGELOG.md
-
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        if: github.ref == 'refs/heads/main' && steps.release.outputs.version
-        with:
-          commit_message: "chore(release): Update CHANGELOG.md for ${{ steps.release.outputs.version }}"
-          file_pattern: CHANGELOG.md
+          git add CHANGELOG.md
+          git commit -m "chore(release): Update CHANGELOG.md for ${{ steps.release.outputs.version }}"
+          git push
