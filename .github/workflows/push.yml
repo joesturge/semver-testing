@@ -3,8 +3,7 @@ on:
     push:
         branches:
             - main
-            - beta
-            - alpha
+    workflow_dispatch:
 
 jobs:
   release:
@@ -23,8 +22,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: print outputs
+      - name: Update CHANGELOG.md
+        if: github.ref == 'refs/heads/main'
         run: |
-          echo "The new version is ${{ steps.release.outputs.version }}"
-          echo "The release tag is ${{ steps.release.outputs.tag }}"
-          echo "The release changelog is ${{ steps.release.outputs.changelog }}"
+          echo "${{ steps.release.outputs.changelog }}" | cat - CHANGELOG.md > temp && mv temp CHANGELOG.md
+
+      - name: Commit and push changes
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git commit -am "chore(release-${{ steps.release.outputs.version }}): Update CHANGELOG.md"
+          git push
