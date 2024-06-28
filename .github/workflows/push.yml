@@ -28,12 +28,7 @@ jobs:
       - name: Update CHANGELOG.md
         if: github.ref == 'refs/heads/main' && steps.release.outputs.version
         run: |
-          git checkout -b release/${{ steps.release.outputs.version }}
           echo "${{ steps.release.outputs.changelog }}" | cat - CHANGELOG.md > temp && mv temp CHANGELOG.md
           git add CHANGELOG.md
           git commit -m "chore(release): Update CHANGELOG.md for ${{ steps.release.outputs.version }}"
-          git push --set-upstream origin release/${{ steps.release.outputs.version }}
-          git checkout main
-          git merge --no-ff release/${{ steps.release.outputs.version }}
-          git push origin main
-          git branch -d release/${{ steps.release.outputs.version }}
+          git push
